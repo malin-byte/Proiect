@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="ProiectFinal" verbose="1">
+    <test name="UI Tests">
+        <classes>
+            <class name="tests.FormTest"/>
+            <class name="tests.WebTablesTest"/>
+            <class name="tests.AlertsTest"/>
+            <class name="tests.RadioButtonTest"/>
+            <class name="tests.VerificareTitluUrlTest"/>
+        </classes>
+    </test>
+    <test name="API Tests">
+        <classes>
+            <class name="tests.ApiTest"/>
+        </classes>
+    </test>
+</suite>

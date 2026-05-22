@@ -9,54 +9,51 @@ import java.net.http.HttpResponse;
 
 public class ApiTest {
 
-    private final String BASE_URL = "https://reqres.in/api";
-    private final String API_KEY = "reqres-free-v1";
+    private final String BASE_URL = "https://jsonplaceholder.typicode.com";
     private final HttpClient client = HttpClient.newHttpClient();
 
     @Test
-    public void testGetUsers() throws Exception {
+    public void testGetPosts() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/users?page=1"))
-                .header("x-api-key", API_KEY)
+                .uri(URI.create(BASE_URL + "/posts"))
                 .GET()
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assert.assertEquals(response.statusCode(), 200, "Status code nu este 200!");
-        Assert.assertTrue(response.body().contains("data"), "Raspunsul nu contine 'data'!");
-        System.out.println("GET users - OK");
+        Assert.assertTrue(response.body().contains("userId"), "Raspunsul nu contine 'userId'!");
+        System.out.println("GET posts - OK");
     }
 
     @Test
-    public void testCreateUser() throws Exception {
-        String body = "{\"name\": \"Maria\", \"job\": \"QA Tester\"}";
+    public void testGetSinglePost() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/posts/1"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Assert.assertEquals(response.statusCode(), 200, "Status code nu este 200!");
+        Assert.assertTrue(response.body().contains("\"id\": 1"), "Post-ul cu id 1 nu a fost gasit!");
+        System.out.println("GET single post - OK");
+    }
+
+    @Test
+    public void testCreatePost() throws Exception {
+        String body = "{\"title\": \"Test Post\", \"body\": \"Continut test\", \"userId\": 1}";
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/users"))
+                .uri(URI.create(BASE_URL + "/posts"))
                 .header("Content-Type", "application/json")
-                .header("x-api-key", API_KEY)
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assert.assertEquals(response.statusCode(), 201, "Status code nu este 201!");
-        Assert.assertTrue(response.body().contains("Maria"), "Userul nu a fost creat!");
-        System.out.println("POST create user - OK");
-    }
-
-    @Test
-    public void testDeleteUser() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/users/2"))
-                .header("x-api-key", API_KEY)
-                .DELETE()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        Assert.assertEquals(response.statusCode(), 204, "Status code nu este 204!");
-        System.out.println("DELETE user - OK");
+        Assert.assertTrue(response.body().contains("Test Post"), "Post-ul nu a fost creat!");
+        System.out.println("POST create post - OK");
     }
 }
