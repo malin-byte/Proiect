@@ -12,7 +12,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import java.time.Duration;
-
+import org.testng.ITestResult;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.OutputType;
+import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.io.IOException;
 public class RadioButtonTest {
 
     WebDriver driver;
@@ -56,7 +61,16 @@ public class RadioButtonTest {
     }
 
     @AfterMethod
-    public void tearDown() {
+    public void tearDown(ITestResult result) throws IOException {
+        if (result.getStatus() == ITestResult.SUCCESS ||
+                result.getStatus() == ITestResult.FAILURE) {
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            File screenshot = ts.getScreenshotAs(OutputType.FILE);
+            String testName = result.getName();
+            FileUtils.copyFile(screenshot,
+                    new File("screenshots/" + testName + ".png"));
+            System.out.println("Screenshot salvat: " + testName + ".png");
+        }
         driver.quit();
     }
 }
